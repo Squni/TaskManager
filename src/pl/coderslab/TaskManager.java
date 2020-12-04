@@ -16,21 +16,21 @@ import java.util.Scanner;
 public class TaskManager {
 
     public static void main (String[] args) {
-        Scanner scan = new Scanner(System.in);
-        Path listPath = Paths.get("list.txt");
+        Scanner systemScan = new Scanner(System.in);
+        Path listPath = Paths.get("list.csv");
         String[][] taskList = getData(listPath);
         String userChoice = "";
         while (!userChoice.equals("exit")) {
             showMenu();
-            userChoice = getChoice(scan);
+            userChoice = getChoice(systemScan);
             if (userChoice.equals("add")) {
-                addTask(scan, taskList);
+                addTask(systemScan, taskList);
             } else if (userChoice.equals("remove")) {
                 //removeTask();
             } else if (userChoice.equals("list")) {
                 showList(taskList);
             }
-        } scan.close();
+        } systemScan.close();
         saveData(taskList, listPath);
     }
 
@@ -115,7 +115,7 @@ public class TaskManager {
     }
 
     public static void addTask(Scanner scan, String[][] taskList) {
-
+        //todo add task to the list
 
     }
 
