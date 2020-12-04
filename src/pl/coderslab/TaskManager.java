@@ -24,7 +24,7 @@ public class TaskManager {
             showMenu();
             userChoice = getChoice(systemScan);
             if (userChoice.equals("add")) {
-                addTask(systemScan, taskList);
+                taskList = addTask(systemScan, taskList);
             } else if (userChoice.equals("remove")) {
                 //removeTask();
             } else if (userChoice.equals("list")) {
@@ -41,6 +41,35 @@ public class TaskManager {
         System.out.println("list");
         System.out.println("exit\n");
 
+    }
+
+    public static String[][] listToArray(ArrayList<String> list) {
+        String[][] tasks = new String[list.size()][3];
+        String[] line = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            line = list.get(i).split(",");
+            for (int j = 0; j < line.length; j++) {
+                tasks[i][j] = line[j];
+            }
+        } return tasks;
+
+    }
+
+    public static ArrayList<String> arrayToList (String[][] arr) {
+        StringBuilder sb = new StringBuilder();
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[i].length; j++) {
+                sb.append(arr[i][j]);
+                if (j != arr[i].length - 1) {
+                    sb.append(",");
+                }
+
+            }
+            list.add(String.valueOf(sb));
+            sb.setLength(0);
+        }
+        return list;
     }
 
     public static String[][] getData(Path taskList) {
@@ -69,14 +98,7 @@ public class TaskManager {
             list.add(scan.nextLine());
 
         }
-        String[][] tasks = new String[list.size()][3];
-        String[] line = new String[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            line = list.get(i).split(",");
-            for (int j = 0; j < line.length; j++) {
-                tasks[i][j] = line[j];
-            }
-        }
+        String[][] tasks = listToArray(list);
         return tasks;
     }
 
@@ -84,10 +106,11 @@ public class TaskManager {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < taskList.length; i++) {
             for (int j = 0; j < taskList[i].length; j++) {
-                if (j == taskList.length -1) {
-                    sb.append(taskList[i][j]);
+                sb.append(taskList[i][j]);
+                if (j != taskList[i].length -1) {
+                    sb.append(",");
                 }
-                sb.append(taskList[i][j]).append(",");
+
             } sb.append("\n");
         }
         try (FileWriter fw = new FileWriter(String.valueOf(savedList), false)) {
@@ -114,9 +137,28 @@ public class TaskManager {
 
     }
 
-    public static void addTask(Scanner scan, String[][] taskList) {
-        //todo add task to the list
-
+    public static String[][] addTask(Scanner scan, String[][] taskList) {
+        StringBuilder sb = new StringBuilder();
+        ArrayList<String> list = arrayToList(taskList);
+        System.out.print("Please add task description: ");
+        sb.append(scan.nextLine()).append(",");
+        System.out.print("Please add task due date: ");
+        String date = scan.nextLine();
+        while (!date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                System.out.println(ConsoleColors.RED + "Invalid date format. Please try:  YYYY-MM-DD." + ConsoleColors.RESET);
+                System.out.print("Please add task due date: ");
+                date = scan.nextLine();
+            }
+        sb.append(date).append(",");
+        System.out.print("Is your task important (true/false): ");
+        String priority = scan.nextLine();
+        while (!priority.equals("true") && !priority.equals("false")) {
+            System.out.println(ConsoleColors.RED + "Invalid input. Please try:  true / false." + ConsoleColors.RESET);
+            System.out.print("Is your task important (true/false): ");
+            priority = scan.nextLine();
+        } sb.append(priority);
+        list.add(String.valueOf(sb));
+        return listToArray(list);
     }
 
     public static void showList(String[][] list) {
