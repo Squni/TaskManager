@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -26,12 +27,13 @@ public class TaskManager {
             if (userChoice.equals("add")) {
                 taskList = addTask(systemScan, taskList);
             } else if (userChoice.equals("remove")) {
-                //removeTask();
+                taskList = removeTask(systemScan, taskList);
             } else if (userChoice.equals("list")) {
                 showList(taskList);
             }
         } systemScan.close();
         saveData(taskList, listPath);
+        System.out.println(ConsoleColors.RED + "See you later!" + ConsoleColors.RESET);
     }
 
     public static void showMenu() {
@@ -125,7 +127,7 @@ public class TaskManager {
         String[] options = {"add", "remove", "list", "exit"};
         String choice = "";
         while (true) {
-            System.out.print("\nGo to: ");
+            System.out.print("Go to: ");
             choice = scan.nextLine();
             for (int i = 0; i < options.length; i++) {
                 if (options[i].equals(choice)) {
@@ -140,7 +142,7 @@ public class TaskManager {
     public static String[][] addTask(Scanner scan, String[][] taskList) {
         StringBuilder sb = new StringBuilder();
         ArrayList<String> list = arrayToList(taskList);
-        System.out.print("Please add task description: ");
+        System.out.print("\nPlease add task description: ");
         sb.append(scan.nextLine()).append(",");
         System.out.print("Please add task due date: ");
         String date = scan.nextLine();
@@ -158,11 +160,13 @@ public class TaskManager {
             priority = scan.nextLine();
         } sb.append(priority);
         list.add(String.valueOf(sb));
+        System.out.println(ConsoleColors.GREEN + "Task successfully added.\n" + ConsoleColors.RESET);
         return listToArray(list);
     }
 
     public static void showList(String[][] list) {
         int index = 0;
+        System.out.println();
         for (String[] row: list) {
             System.out.print(index + " : ");
             for (String pos: row) {
@@ -172,12 +176,27 @@ public class TaskManager {
             System.out.println();
 
         }
+        System.out.println();
     }
-//
-//    public static void removeTask(Scanner scan) {
-//
-//
-//    }
+
+    public static String[][] removeTask(Scanner scan, String[][] taskList) {
+        ArrayList<String> list = arrayToList(taskList);
+        System.out.print("\nPlease select number to remove: ");
+        int input = 0;
+        while (true) {
+            try {
+                input = Integer.parseInt(scan.nextLine());
+                if (input < 0 || input >= list.size()){
+                    throw new Exception();
+                }
+                break;
+            } catch (Exception e) {
+                System.out.println(ConsoleColors.RED + "Task with that index doesn't exist." + ConsoleColors.RESET);
+            } System.out.print("Please select number to remove: ");
+        } list.remove(input);
+        System.out.println(ConsoleColors.GREEN + "Task successfully removed.\n" + ConsoleColors.RESET);
+        return listToArray(list);
+    }
 
 
 }
